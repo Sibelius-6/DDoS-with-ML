@@ -21,6 +21,8 @@ import os
 import time
 import sys
 from scipy.stats import reciprocal
+from sklearn.metrics import accuracy_score
+from xgboost import XGBClassifier
 
 # Note the mess above...
 
@@ -92,7 +94,7 @@ all_test = pd.concat(test_li, axis=0, ignore_index=True)
 
 X_test, y_test = dataPreprocessing(all_test, my_scaler)
 
-y_pred = model.predict_classes(X_test)
+y_pred = model.predict(X_test) 
 
 acc_score = accuracy_score(y_test, y_pred)
 my_print('acc_score is ' + str(acc_score))

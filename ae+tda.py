@@ -26,21 +26,30 @@ from scipy.stats import reciprocal
 # this is the tda lib we are using.
 import kmapper as km
 
+from utils import *
 
 benign = pd.read_csv('all_benign.csv')
 benign['Label'] = 0
 
 my_scaler = get_me_scaler(benign)
-X_benign, y_benign = dataPreprocessing2(benign, my_scaler) # scale the testing files
+X_benign, y_benign = dataPreprocessing(benign, my_scaler) # scale the testing files
+
+X_train, X_opt = train_test_split(X_benign, test_size=0.2, random_state=66, shuffle=True)
+
 
 # as always, you could change optimizer.
 optzer = "adamax"
 input_dim = len(X_benign[0])
 autoencoder = bios(input_dim=input_dim, dropout=False, optimizer=optzer)
 
+history = autoencoder.fit(X_train, X_train, epochs=150,
+                          validation_data=(X_opt, X_opt),
+                          callbacks=[keras.callbacks.EarlyStopping(patience=15)],
+                          verbose=1).history
+
 # note that this is the file you are "plotting", be sure it has benign and attacks.
 # The better AE performs, the better separation you can see in the tda visualization.
-testt = pd.read_csv("attack.csv")
+testt = pd.read_csv("train/ldap.csv")
 # labeling
 testt['Label'] = testt.apply(lambda x: int(x['Src IP'] == '172.16.0.5' or x['Dst IP'] == '172.16.0.5'), axis=1)
 
@@ -62,12 +71,11 @@ graph = mapper.map(lens,
                    X_test,
                    nr_cubes=15,
                    overlap_perc=0.4,
-                   clusterer=km.cluster.KMeans(n_clusters=2,
-                                               random_state=1618033))
+                   clusterer=km.cluster.KMeans(n_clusters=5))
 file = 'tda.html'
 _ = mapper.visualize(graph,
                  path_html=file,
-                 title=attack,
+                 title="Visualization of Autoencoder output",
                  custom_tooltips=y_test,
                  color_function=y_test
                 )

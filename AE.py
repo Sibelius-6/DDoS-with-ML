@@ -49,7 +49,7 @@ autoencoder = bios(input_dim=input_dim, optimizer=optzer)
 # print the structure
 #print(autoencoder.summary())
 
-history = autoencoder.fit(X_train, X_train, epochs=150,
+history = autoencoder.fit(X_train, X_train, epochs=150, 
                   validation_data=(X_opt, X_opt),
                   callbacks=[keras.callbacks.EarlyStopping(patience=15)],
                   verbose=1).history

@@ -20,6 +20,7 @@ import os
 import time
 import sys
 from scipy.stats import reciprocal
+from sklearn.metrics import accuracy_score
 
 # Note the mess above...
 
@@ -102,7 +103,7 @@ model.compile(loss='sparse_categorical_crossentropy', optimizer='adamax', metric
 # As usual, you can remove the random_state.
 X_train, X_opt, y_train, y_opt = train_test_split(X, y, test_size=0.2, random_state=66, shuffle=True)
 
-history = model.fit(X_train, y_train, epochs=50,
+history = model.fit(X_train, y_train, epochs=50, #50
                           validation_data=(X_opt, y_opt),
                           verbose=1).history
 
