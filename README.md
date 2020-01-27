@@ -23,9 +23,41 @@ as described in Section 2.3 of [report](work_report.pdf).
 Some frequently used functions.
 
 ## Data files
+First process the pcap files via [CICFlowMeter](http://netflowmeter.ca/). The output is csv files. They are 1-to-1 correspondance. For example, `A.pcap` -> `A.csv`.
 
-* attack.csv: a sampled portion of attacks (with a small amount of benign as well), mostly DNS attacks
-* all_benign.csv: all benign traffics, which are extracted by the convention in original paper (details in report)
-* train/*.csv: A.csv => type A attacks. On training day
-* test/*.csv: same convention as above, but on testing day
-* Note that all data files (except for all_benign) are sampled data, then there might be some discretion to the results in the report. Ideally all the models should be running against all data files. 
+The source pcap files from UNB-DDoS2019 are spanning whole capturing period, something like
+```
+file_1.pcap/file_1.csv   9:00 - 9:10
+file_2.pcap/file_2.csv   9:10 - 9:13
+.
+.
+.
+```
+Since CICFlowMeter generates the timestamp of each traffic flow, we can know the attack type if this traffic is attack.
+
+### attack.csv
+a sampled portion of attacks (with a small amount of benign as well). Here I just used one pcap/csv file serving illustrating purposes. Since the time duration of this file, let's say `file_X`, falls between the DNS attack period specified in UNB paper, thus the attack traffics of this file are all DNS attacks. Also, note that there are some benign traffics in this file.
+
+**Note**: 
+### all_benign.csv
+all benign traffics, which are extracted by the convention in original paper (details in report). Here is a pseudo python code on how you can extract all benign traffics:
+
+```python
+li = [] # initialize the empty dataframe 
+
+for file in *.csv: # here *.csv represents the list of all csv files [file_1.csv, file_2.csv, ...]
+    df = pd.read_csv(file) # store csv into dataframe
+    df = df[(df['Src IP'] != '172.16.0.5') & (df['Dst IP'] != '172.16.0.5')] # if src/dst ip != 172.16.0.5, then it's benign
+    li.append[df]
+    
+benign = pd.concat(li)
+benign.to_csv('all_benign.csv')
+```
+
+### train/*.csv
+A.csv => type A attacks. On training day. (Here I also picked some files as attack files, similar to how I picked attack.csv).
+
+### test/*.csv
+same convention as above, but on testing day.
+
+
