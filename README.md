@@ -43,12 +43,12 @@ a sampled portion of attacks (with a small amount of benign as well). Here I jus
 all benign traffics, which are extracted by the convention in original paper (details in report). Here is a pseudo python code on how you can extract all benign traffics:
 
 ```python
-li = [] # initialize the empty dataframe 
+li = [] # initialize the empty list of dataframe
 
 for file in *.csv: # here *.csv represents the list of all csv files [file_1.csv, file_2.csv, ...]
     df = pd.read_csv(file) # store csv into dataframe
     df = df[(df['Src IP'] != '172.16.0.5') & (df['Dst IP'] != '172.16.0.5')] # if src/dst ip != 172.16.0.5, then it's benign
-    li.append[df]
+    li.append(df) # add this df to our list
     
 benign = pd.concat(li)
 benign.to_csv('all_benign.csv')
